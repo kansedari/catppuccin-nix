@@ -4,7 +4,7 @@ index a4b6e93..42c1824 100644
 +++ b/main.js
 @@ -1,5 +1,6 @@
  import JsonUrl from "json-url";
- import { variants } from "@catppuccin/palette";
+ import { variants } from "./catppuccin-palette.js";
 +import { writeFileSync } from "node:fs";
  
  const accents = [
