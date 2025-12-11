@@ -40,6 +40,7 @@ on:
 jobs:
   build:
     name: Build site
+    if: ${{ github.repository_owner == 'catppuccin' }}
 
     runs-on: ubuntu-latest
 
@@ -70,10 +71,9 @@ jobs:
 
   deploy:
     name: Deploy website
+    if: ${{ github.repository_owner == 'catppuccin' && (github.event_name == 'push' || inputs.deploy) }}
 
     needs: build
-
-    if: ${{ github.event_name == 'push' || inputs.deploy }}
 
     runs-on: ubuntu-latest
 

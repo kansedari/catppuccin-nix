@@ -10,6 +10,7 @@ on:
 jobs:
   nix:
     name: Nix files
+    if: ${{ github.repository_owner == 'catppuccin' }}
 
     runs-on: ubuntu-latest
 

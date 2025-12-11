@@ -9,6 +9,7 @@ on:
 jobs:
   flake:
     name: Update flake.lock
+    if: ${{ github.repository_owner == 'catppuccin' }}
 
     runs-on: ubuntu-latest
 
@@ -52,6 +53,7 @@ jobs:
 
   ports:
     name: Update port sources
+    if: ${{ github.repository_owner == 'catppuccin' }}
 
     runs-on: ubuntu-latest
 

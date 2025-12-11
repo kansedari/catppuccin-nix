@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     name: Trigger deployment
+    if: ${{ github.repository_owner == 'catppuccin' }}
 
     permissions:
       actions: write
