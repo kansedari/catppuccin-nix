@@ -22,7 +22,7 @@ in
 
     flavor = lib.mkOption {
       type = catppuccinLib.types.flavor;
-      default = "mocha";
+      default = "dark";
       description = "Global Catppuccin flavor";
     };
 
