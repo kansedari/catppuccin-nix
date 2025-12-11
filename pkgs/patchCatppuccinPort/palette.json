@@ -1,0 +1,168 @@
+{
+  "dark": {
+    "rosewater": {
+      "hex": "#f5e0dc"
+    },
+    "flamingo": {
+      "hex": "#f2cdcd"
+    },
+    "pink": {
+      "hex": "#f5c2e7"
+    },
+    "mauve": {
+      "hex": "#cba6f7"
+    },
+    "red": {
+      "hex": "#f38ba8"
+    },
+    "maroon": {
+      "hex": "#eba0ac"
+    },
+    "peach": {
+      "hex": "#fab387"
+    },
+    "yellow": {
+      "hex": "#f9e2af"
+    },
+    "green": {
+      "hex": "#a6e3a1"
+    },
+    "teal": {
+      "hex": "#94e2d5"
+    },
+    "sky": {
+      "hex": "#89dceb"
+    },
+    "sapphire": {
+      "hex": "#74c7ec"
+    },
+    "blue": {
+      "hex": "#89b4fa"
+    },
+    "lavender": {
+      "hex": "#b4befe"
+    },
+    "monochrome": {
+      "hex": "#f4f4f4"
+    },
+    "text": {
+      "hex": "#f4f4f4"
+    },
+    "subtext1": {
+      "hex": "#e0e0e0"
+    },
+    "subtext0": {
+      "hex": "#c6c6c6"
+    },
+    "overlay2": {
+      "hex": "#a8a8a8"
+    },
+    "overlay1": {
+      "hex": "#8d8d8d"
+    },
+    "overlay0": {
+      "hex": "#6f6f6f"
+    },
+    "surface2": {
+      "hex": "#525252"
+    },
+    "surface1": {
+      "hex": "#393939"
+    },
+    "surface0": {
+      "hex": "#262626"
+    },
+    "base": {
+      "hex": "#161616"
+    },
+    "mantle": {
+      "hex": "#0b0b0b"
+    },
+    "crust": {
+      "hex": "#000000"
+    }
+  },
+  "light": {
+    "rosewater": {
+      "hex": "#dc8a78"
+    },
+    "flamingo": {
+      "hex": "#dd7878"
+    },
+    "pink": {
+      "hex": "#ea76cb"
+    },
+    "mauve": {
+      "hex": "#8839ef"
+    },
+    "red": {
+      "hex": "#d20f39"
+    },
+    "maroon": {
+      "hex": "#e64553"
+    },
+    "peach": {
+      "hex": "#fe640b"
+    },
+    "yellow": {
+      "hex": "#df8e1d"
+    },
+    "green": {
+      "hex": "#40a02b"
+    },
+    "teal": {
+      "hex": "#179299"
+    },
+    "sky": {
+      "hex": "#04a5e5"
+    },
+    "sapphire": {
+      "hex": "#209fb5"
+    },
+    "blue": {
+      "hex": "#1e66f5"
+    },
+    "lavender": {
+      "hex": "#7287fd"
+    },
+    "monochrome": {
+      "hex": "#000000"
+    },
+    "text": {
+      "hex": "#000000"
+    },
+    "subtext1": {
+      "hex": "#0b0b0b"
+    },
+    "subtext0": {
+      "hex": "#161616"
+    },
+    "overlay2": {
+      "hex": "#262626"
+    },
+    "overlay1": {
+      "hex": "#393939"
+    },
+    "overlay0": {
+      "hex": "#525252"
+    },
+    "surface2": {
+      "hex": "#6f6f6f"
+    },
+    "surface1": {
+      "hex": "#8d8d8d"
+    },
+    "surface0": {
+      "hex": "#a8a8a8"
+    },
+    "base": {
+      "hex": "#c6c6c6"
+    },
+    "mantle": {
+      "hex": "#e0e0e0"
+    },
+    "crust": {
+      "hex": "#f4f4f4"
+    }
+  }
+}
