@@ -70,88 +70,106 @@ in
   if builtins.elem port skipPatch
   then pristine
   else
-    pkgs.runCommandLocal "catppuccin-${port}-patched" {
-      src = pristine;
-      nativeBuildInputs = [pkgs.gnused pkgs.findutils];
-    } ''
-      cp -r --no-preserve=mode,ownership --dereference "$src/." "$out"
+    (pkgs.runCommandLocal "catppuccin-${port}-patched" {
+        src = pristine;
+        nativeBuildInputs = [pkgs.gnused pkgs.findutils];
+        passthru = {inherit rev;};
+      } ''
+        cp -r --no-preserve=mode,ownership --dereference "$src/." "$out"
 
-      replace_in_files() {
-        local pattern="$1" script="$2"
-        find "$out" -type f -print0 | xargs -0 grep -liZ "$pattern" 2>/dev/null | \
-          while IFS= read -r -d $'\0' f; do sed -i "$script" "$f"; done || true
-      }
+        replace_in_files() {
+          local pattern="$1" script="$2"
+          find "$out" -type f -print0 | xargs -0 grep -liZ "$pattern" 2>/dev/null | \
+            while IFS= read -r -d $'\0' f; do sed -i "$script" "$f"; done || true
+        }
 
-      rename_items() {
-        local type="$1" pattern="$2" from="$3" to="$4"
-        find "$out" -depth -type "$type" -name "$pattern" 2>/dev/null | while read -r item; do
-          mv "$item" "$(dirname "$item")/$(basename "$item" | sed "s/$from/$to/g")"
-        done || true
-      }
+        rename_items() {
+          local type="$1" pattern="$2" from="$3" to="$4"
+          find "$out" -depth -type "$type" -iname "$pattern" 2>/dev/null | while read -r item; do
+            mv "$item" "$(dirname "$item")/$(basename "$item" | sed "s/$from/$to/gI")"
+          done || true
+        }
 
-      remove_items() {
-        for pattern in "$@"; do
-          find "$out" -depth -name "$pattern" -exec rm -rf {} \; 2>/dev/null || true
-        done
-      }
+        remove_items() {
+          for pattern in "$@"; do
+            find "$out" -depth -iname "$pattern" -exec rm -rf {} \; 2>/dev/null || true
+          done
+        }
 
-      replace_in_files '${grepPattern}' '${sedScript}'
+        replace_in_files '${grepPattern}' '${sedScript}'
 
-      # create monochrome accent variants from rosewater
-      ${lib.concatStringsSep "\n" (map (
-          flavor: let
-            cfg = flavorConfig.${flavor};
-          in ''
-            # ${flavor} -> ${cfg.target}
-            for dir in $(find "$out" -type d -name "*-${flavor}-rosewater" 2>/dev/null); do
-              newdir="''${dir%-rosewater}-monochrome"
-              cp -r "$dir" "$newdir"
-              find "$newdir" -type f -name "*rosewater*" | while read -r f; do
-                mv "$f" "''${f//rosewater/monochrome}"
+        # create monochrome accent variants from rosewater
+        ${lib.concatStringsSep "\n" (map (
+            flavor: let
+              cfg = flavorConfig.${flavor};
+            in ''
+              # ${flavor} -> ${cfg.target}
+              for dir in $(find "$out" -type d -name "*-${flavor}-rosewater" 2>/dev/null); do
+                newdir="''${dir%-rosewater}-monochrome"
+                cp -r "$dir" "$newdir"
+                find "$newdir" -type f -name "*rosewater*" | while read -r f; do
+                  mv "$f" "''${f//rosewater/monochrome}"
+                done
+                find "$newdir" -type f -exec sed -i \
+                  "s/${cfg.rosewater}/${cfg.monochrome}/gI; s/rosewater/monochrome/g; s/Rosewater/Monochrome/g" {} \;
               done
-              find "$newdir" -type f -exec sed -i \
-                "s/${cfg.rosewater}/${cfg.monochrome}/gI; s/rosewater/monochrome/g; s/Rosewater/Monochrome/g" {} \;
-            done
 
-            for file in $(find "$out" -type f -name "*-${flavor}-rosewater.*" 2>/dev/null); do
-              newfile="$(echo "$file" | sed 's/-rosewater\./-monochrome./')"
-              cp "$file" "$newfile"
-              sed -i "s/${cfg.rosewater}/${cfg.monochrome}/gI; s/rosewater/monochrome/g; s/Rosewater/Monochrome/g" "$newfile"
-            done
-          ''
-        )
-        flavors)}
+              for file in $(find "$out" -type f -name "*-${flavor}-rosewater.*" 2>/dev/null); do
+                newfile="$(echo "$file" | sed 's/-rosewater\./-monochrome./')"
+                cp "$file" "$newfile"
+                sed -i "s/${cfg.rosewater}/${cfg.monochrome}/gI; s/rosewater/monochrome/g; s/Rosewater/Monochrome/g" "$newfile"
+              done
+            ''
+          )
+          flavors)}
 
-      ${lib.concatStringsSep "\n" (map (
-          flavor: let
-            target = flavorConfig.${flavor}.target;
-            Target = lib.toUpper (lib.substring 0 1 target) + lib.substring 1 (-1) target;
-            Flavor = lib.toUpper (lib.substring 0 1 flavor) + lib.substring 1 (-1) flavor;
-          in ''
-            rename_items d "*${flavor}*" "${flavor}" "${target}"
-            rename_items f "*${flavor}*" "${flavor}" "${target}"
-            replace_in_files '${flavor}\|${Flavor}' 's/${flavor}/${target}/g; s/${Flavor}/${Target}/g'
-          ''
-        )
-        flavors)}
+        ${lib.concatStringsSep "\n" (map (
+            flavor: let
+              target = flavorConfig.${flavor}.target;
+              Target = lib.toUpper (lib.substring 0 1 target) + lib.substring 1 (-1) target;
+              Flavor = lib.toUpper (lib.substring 0 1 flavor) + lib.substring 1 (-1) flavor;
+            in ''
+              rename_items d "*${flavor}*" "${flavor}" "${target}"
+              rename_items f "*${flavor}*" "${flavor}" "${target}"
+              replace_in_files '${flavor}\|${Flavor}' 's/${flavor}/${target}/g; s/${Flavor}/${Target}/g'
+            ''
+          )
+          flavors)}
 
-      remove_items "*frappe*" "*macchiato*" "*Frappe*" "*Macchiato*"
+        remove_items "*frappe*" "*macchiato*"
 
-      # handle js-based ports using @catppuccin/palette
-      if [ -f "$out/package.json" ] && grep -q "@catppuccin/palette" "$out/package.json"; then
-        echo "Patching JS-based port: replacing @catppuccin/palette with local module"
+        # add monochrome accent to palette.json if it exists
+        if [ -f "$out/palette.json" ]; then
+          ${pkgs.jq}/bin/jq '
+            .dark.colors.monochrome = {
+              "name": "Monochrome", "order": 14, "hex": "#f4f4f4",
+              "rgb": {"r": 244, "g": 244, "b": 244},
+              "hsl": {"h": 0, "s": 0, "l": 0.956}, "accent": true
+            } |
+            .light.colors.monochrome = {
+              "name": "Monochrome", "order": 14, "hex": "#000000",
+              "rgb": {"r": 0, "g": 0, "b": 0},
+              "hsl": {"h": 0, "s": 0, "l": 0}, "accent": true
+            }
+          ' "$out/palette.json" > "$out/palette.json.tmp"
+          mv "$out/palette.json.tmp" "$out/palette.json"
+        fi
 
-        cp ${customPalette} "$out/palette.json"
-        cp ${paletteModule} "$out/catppuccin-palette.js"
+        # handle js-based ports using @catppuccin/palette
+        if [ -f "$out/package.json" ] && grep -q "@catppuccin/palette" "$out/package.json"; then
+          echo "Patching JS-based port: replacing @catppuccin/palette with local module"
 
-        find "$out" -type f \( -name "*.js" -o -name "*.ts" -o -name "*.mjs" \) -exec sed -i \
-          -e 's|from "@catppuccin/palette"|from "./catppuccin-palette.js"|g' \
-          -e "s|from '@catppuccin/palette'|from './catppuccin-palette.js'|g" \
-          -e 's|require("@catppuccin/palette")|require("./catppuccin-palette.js")|g' \
-          -e "s|require('@catppuccin/palette')|require('./catppuccin-palette.js')|g" \
-          -e 's/"lavender",/"lavender",\n    "monochrome",/g' \
-          {} \;
+          cp ${customPalette} "$out/palette.json"
+          cp ${paletteModule} "$out/catppuccin-palette.js"
 
-        sed -i '/"@catppuccin\/palette"/d' "$out/package.json"
-      fi
-    ''
+          find "$out" -type f \( -name "*.js" -o -name "*.ts" -o -name "*.mjs" \) -exec sed -i \
+            -e 's|from "@catppuccin/palette"|from "./catppuccin-palette.js"|g' \
+            -e "s|from '@catppuccin/palette'|from './catppuccin-palette.js'|g" \
+            -e 's|require("@catppuccin/palette")|require("./catppuccin-palette.js")|g' \
+            -e "s|require('@catppuccin/palette')|require('./catppuccin-palette.js')|g" \
+            -e 's/"lavender",/"lavender",\n    "monochrome",/g' \
+            {} \;
+
+          sed -i '/"@catppuccin\/palette"/d' "$out/package.json"
+        fi
+      '')
