@@ -73,6 +73,7 @@ in
     spotify-player.enable = true;
     starship.enable = true;
     swaylock.enable = isLinux;
+    television.enable = true;
     thunderbird = {
       enable = isLinux;
       profiles.catppuccin-mocha-mauve.isDefault = true;
@@ -80,6 +81,7 @@ in
     tmux.enable = true;
     tofi.enable = isLinux;
     vesktop.enable = true;
+    vicinae.enable = isLinux;
     vivid.enable = true;
     vscode = {
       enable = true;

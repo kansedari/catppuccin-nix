@@ -54,10 +54,12 @@
   ./sway.nix
   ./swaylock.nix
   ./swaync.nix
+  ./television.nix
   ./thunderbird.nix
   ./tmux.nix
   ./tofi.nix
   ./vesktop.nix
+  ./vicinae.nix
   ./vivid.nix
   ./vscode.nix
   ./waybar.nix
