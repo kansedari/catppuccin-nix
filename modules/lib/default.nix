@@ -30,10 +30,8 @@ in
 lib.makeExtensible (ctp: {
   types = {
     flavor = types.enum [
-      "latte"
-      "frappe"
-      "macchiato"
-      "mocha"
+      "dark"
+      "light"
     ];
 
     accent = types.enum [
@@ -43,6 +41,7 @@ lib.makeExtensible (ctp: {
       "lavender"
       "maroon"
       "mauve"
+      "monochrome"
       "peach"
       "pink"
       "red"
@@ -51,9 +50,30 @@ lib.makeExtensible (ctp: {
       "sky"
       "teal"
       "yellow"
-      "text"
     ];
   };
+
+  /**
+    Map user-facing flavor names to internal Catppuccin flavor names.
+
+    # Example
+
+    ```nix
+    toInternalFlavor "dark"
+    => "mocha"
+    ```
+
+    # Type
+
+    ```
+    toInternalFlavor :: String -> String
+    ```
+
+    # Arguments
+
+    - [flavor] User-facing flavor name ("dark" or "light")
+  */
+  toInternalFlavor = flavor: if flavor == "dark" then "mocha" else "latte";
 
   /**
     Capitalize the first letter in a string, and change the final "e" into "é" if the
